@@ -134,6 +134,7 @@ class Sentence():
         Updates internal knowledge representation given the fact that
         a cell is known to be safe.
         """
+        print("Cell to be discarded: ", cell, "From sentence: ", self)
         self.cells.discard(cell)
 
 
@@ -200,7 +201,21 @@ class MinesweeperAI():
 
         # 3) add a new sentence to the AI's knowledge base
         #    based on the value of `cell` and `count`
-        self.knowledge.append(Sentence(cell, count))
+
+        # Loop over all cells within one row and column
+        surrounding_cells = set()
+        for i in range(cell[0] - 1, cell[0] + 2):
+            for j in range(cell[1] - 1, cell[1] + 2):
+
+                # Ignore the cell itself
+                if (i, j) == cell:
+                    continue
+
+                # Update count if cell in bounds and is mine
+                if (i, j) not in self.moves_made:
+                    surrounding_cells.add((i, j))
+
+        self.knowledge.append(Sentence(surrounding_cells, count))
 
         # 4) mark any additional cells as safe or as mines
         #    if it can be concluded based on the AI's knowledge base
@@ -220,7 +235,7 @@ class MinesweeperAI():
             else:
                 for c in safe_cells:
                     self.mark_safe(c)
-                    print("Cells added to sabe by AI: ", c)
+                    print("Cells added to safes by AI: ", c)
                 for c in mines_cells:
                     self.mark_mine(c)
 
@@ -267,8 +282,9 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        for sentence in self.knowledge:
-            for move in sentence.cells:
+        for i in range(self.height):
+            for j in range(self.width):
+                move = (i, j)
                 if not(move in self.moves_made) and not(move in self.mines):
                     return move
 
