@@ -114,7 +114,7 @@ class Sentence():
         """
         Returns the set of all cells in self.cells known to be safe.
         """
-        print(self)
+        print("Sentences: ", self)
         if self.count == 0:
             return self.cells
         else:
@@ -212,7 +212,7 @@ class MinesweeperAI():
                     continue
 
                 # Update count if cell in bounds and is mine
-                if (i, j) not in self.moves_made:
+                if (i, j) not in self.moves_made and 0 <= i < self.height and 0 <= j < self.width:
                     surrounding_cells.add((i, j))
 
         self.knowledge.append(Sentence(surrounding_cells, count))
